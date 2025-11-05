@@ -613,7 +613,7 @@ int ones = num % 10;
 int tens = (num / 10) % 10;
 // Result: 6</pre>
                 <p style="margin-top: 10px; font-size: 1.1rem;"><strong>למה זה עובד?</strong><br>
-                קודם כל, <code>num / 10</code> מסיר את ספרת האחדות (365 → 36).<br>
+                קודם כל, <code>num / 10</code> מסיר את ספרת האחדות (365 ← 36).<br>
                 אחר כך, <code>% 10</code> לוקח את הספרה הימנית (6).</p>
                 <div class="info-box" style="font-size: 1rem; margin-top: 10px;">
                     שלב 1: 365 ÷ 10 = 36<br>
