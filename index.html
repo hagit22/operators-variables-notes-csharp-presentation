@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דגשים באופרטורים ומשתנים</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f8fafc 100%);
+            line-height: 1.6;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        .slide {
+            padding: 40px 60px 60px 60px;
+            min-height: calc(100vh - 120px);
+            display: none;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        /* Logo Watermark */
+        .slide::before {
+            content: "h";
+            position: absolute;
+            top: 5px;
+            left: 35px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 300;
+            font-size: 5rem;
+            opacity: 0.2;
+            color: #1e3a8a;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .slide::after {
+            content: "y";
+            position: absolute;
+            top: 5px;
+            left: 52px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 300;
+            font-size: 5rem;
+            opacity: 0.2;
+            color: #f97316;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Title Slide */
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 50%, #f97316 100%);
+            color: white;
+        }
+
+        .title-slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title-slide::before,
+        .title-slide::after {
+            display: none;
+        }
+
+        .title-slide h1 {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        /* Content Slides */
+        .content-slide h2 {
+            font-size: 2.5rem;
+            color: #1e3a8a;
+            margin: 0 0 20px 0;
+            border-bottom: 4px solid #f97316;
+            padding-bottom: 15px;
+        }
+
+        .content-slide h3 {
+            font-size: 1.8rem;
+            color: #0ea5e9;
+            margin: 20px 0 15px 0;
+        }
+
+        .content-slide p {
+            font-size: 1.2rem;
+            color: #374151;
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+
+        /* Focus Boxes */
+        .focus-item {
+            background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+            border: 2px solid #0ea5e9;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .focus-item h4 {
+            color: #1e3a8a;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        /* CODE BLOCKS - LTR */
+        .focus-item pre,
+        .code-example {
+            direction: ltr;
+            text-align: left;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 1rem;
+            line-height: 1.6;
+            font-family: 'Courier New', monospace;
+        }
+
+        .comment {
+            color: #10b981;
+        }
+
+        .keyword {
+            color: #8b5cf6;
+        }
+
+        .string {
+            color: #f59e0b;
+        }
+
+        .number {
+            color: #06b6d4;
+        }
+
+        /* Grid Layouts */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .grid-auto {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        /* Clickable Interactive Items - ANSWER ONLY HIDDEN */
+        .answer-hidden {
+            opacity: 0.05;
+            filter: blur(2px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 2px dashed #0ea5e9;
+        }
+
+        .answer-hidden::before {
+            content: "👆 לחץ לראות תשובה";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.1rem;
+            color: #1e3a8a;
+            font-weight: bold;
+            opacity: 1;
+            filter: none;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .answer-hidden.revealed {
+            opacity: 1;
+            filter: blur(0);
+            cursor: default;
+            border-style: solid;
+        }
+
+        .answer-hidden.revealed::before {
+            display: none;
+        }
+
+        .answer-hidden:hover:not(.revealed) {
+            opacity: 0.15;
+            transform: scale(1.01);
+        }
+
+        /* Question Slides */
+        .question-slide {
+            text-align: center;
+        }
+
+        .question {
+            font-size: 2.5rem;
+            color: #1e3a8a;
+            margin: 40px 0;
+            background: #f8fafc;
+            padding: 35px;
+            border-radius: 20px;
+            border: 3px solid #0ea5e9;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.4rem;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #0ea5e9, #1e3a8a);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .error-box {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        /* Result Display */
+        .result-display {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .result-error {
+            background: #ef4444;
+        }
+
+        /* Exercise Box */
+        .exercise-box {
+            background: linear-gradient(135deg, #6366f1, #4338ca);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            margin: 25px 0;
+            line-height: 2;
+        }
+
+        .exercise-box strong {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+
+        table th {
+            background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        table td {
+            padding: 12px;
+            border: 2px solid #e0f2fe;
+            text-align: center;
+        }
+
+        table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* Bullet Points */
+        ul {
+            font-size: 1.3rem;
+            line-height: 2;
+            margin: 20px 40px;
+        }
+
+        ul li {
+            margin: 10px 0;
+        }
+
+        /* Step-by-step boxes */
+        .step-box {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+        }
+
+        .step-box h4 {
+            color: white;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #0ea5e9;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Slide Number */
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 45px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px 12px;
+            border-radius: 15px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        /* Copyright */
+        .copyright {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px 12px;
+            border-radius: 15px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            opacity: 1;
+            pointer-events: none;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+
+            .title-slide h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.5rem;
+            }
+
+            .content-slide h2 {
+                font-size: 2rem;
+            }
+
+            .content-slide h3 {
+                font-size: 1.5rem;
+            }
+
+            .question {
+                font-size: 1.6rem;
+                padding: 20px;
+            }
+
+            .grid-3,
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .slide::before {
+                font-size: 3rem;
+            }
+
+            .slide::after {
+                font-size: 3rem;
+            }
+
+            .nav-buttons {
+                bottom: 10px;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .slide-number {
+                font-size: 12px;
+            }
+
+            .copyright {
+                font-size: 0.6rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav-buttons,
+            button {
+                display: none !important;
+            }
+
+            .answer-hidden {
+                opacity: 1 !important;
+                filter: none !important;
+            }
+
+            .answer-hidden::before {
+                display: none !important;
+            }
+
+            .slide {
+                display: block !important;
+                page-break-after: always;
+                page-break-inside: avoid;
+                min-height: 90vh;
+                padding: 30px;
+            }
+
+            .slide::before {
+                font-size: 3rem;
+            }
+
+            .slide::after {
+                font-size: 3rem;
+            }
+
+            .slide-number {
+                visibility: hidden;
+            }
+
+            .copyright {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+            }
+
+            .presentation-container {
+                box-shadow: none !important;
+                max-width: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide">
+            <h1>יסודות מדעי המחשב - שפת #C</h1>
+            <div class="subtitle">דגשים באופרטורים ומשתנים </div>
+            <div style="font-size: 1.6rem; margin-top: 20px; opacity: 0.7; color: #e0f2fe;">
+                חגית ידוב
+            </div>
+        </div>
+
+        <!-- ===== SECTION 1: Breaking & Building Numbers ===== -->
+
+        <!-- Slide 2: The Exercise -->
+        <div class="slide content-slide">
+            <h2>תרגיל: פירוק ובניית מספרים</h2>
+            
+            <div class="exercise-box">
+                <strong>📝 התרגיל:</strong>
+                יש לכם מספר תלת-ספרתי: <span style="font-size: 2rem; font-weight: bold;">365</span>
+                <br><br>
+                <strong>חלק א:</strong> פרקו את המספר לספרות בודדות
+                <br>
+                <strong>חלק ב:</strong> בנו מספר דו-ספרתי מספרת העשרות וספרת האחדות (6 ו-5)
+                <br>
+                <strong>חלק ג:</strong> הכפילו את התוצאה מחלק ב' ב-2 והדפיסו את התשובה
+            </div>
+
+            <p style="font-size: 1.3rem; text-align: center; margin-top: 30px; color: #0ea5e9;">
+                בואו נתחיל! 🚀
+            </p>
+        </div>
+
+        <!-- Slide 3: Breaking Numbers - Detailed Teaching -->
+        <div class="slide content-slide">
+            <h2>חלק א: פירוק המספר לספרות</h2>
+            <p>בואו נלמד איך לחלץ כל ספרה בנפרד ולמה זה עובד:</p>
+
+            <div class="focus-item" style="border-color: #10b981; border-width: 3px;">
+                <h4>🔢 חילוץ ספרת האחדות</h4>
+                <pre>int num = 365;
+int ones = num % 10;
+// Result: 5</pre>
+                <p style="margin-top: 10px; font-size: 1.1rem;"><strong>למה זה עובד?</strong><br>
+                האופרטור % (מודולו) מחזיר את השארית של חלוקה. כשמחלקים ב-10, השארית היא תמיד הספרה הימנית ביותר.</p>
+                <div class="info-box" style="font-size: 1rem; margin-top: 10px;">
+                    דוגמה: 365 ÷ 10 = 36 עם שארית 5
+                </div>
+            </div>
+
+            <div class="focus-item" style="border-color: #0ea5e9; border-width: 3px;">
+                <h4>🔢 חילוץ ספרת העשרות</h4>
+                <pre>int num = 365;
+int tens = (num / 10) % 10;
+// Result: 6</pre>
+                <p style="margin-top: 10px; font-size: 1.1rem;"><strong>למה זה עובד?</strong><br>
+                קודם כל, <code>num / 10</code> מסיר את ספרת האחדות (365 → 36).<br>
+                אחר כך, <code>% 10</code> לוקח את הספרה הימנית (6).</p>
+                <div class="info-box" style="font-size: 1rem; margin-top: 10px;">
+                    שלב 1: 365 ÷ 10 = 36<br>
+                    שלב 2: 36 % 10 = 6
+                </div>
+            </div>
+
+            <div class="focus-item" style="border-color: #f97316; border-width: 3px;">
+                <h4>🔢 חילוץ ספרת המאות</h4>
+                <pre>int num = 365;
+int hundreds = num / 100;
+// Result: 3</pre>
+                <p style="margin-top: 10px; font-size: 1.1rem;"><strong>למה זה עובד?</strong><br>
+                חלוקה שלמה ב-100 משאירה רק את ספרת המאות (וכל הספרות משמאל לה אם יש).</p>
+                <div class="info-box" style="font-size: 1rem; margin-top: 10px;">
+                    365 ÷ 100 = 3 (חלוקה שלמה - מתעלמים מהשארית)
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Part B - Student Way (String) -->
+        <div class="slide content-slide">
+            <h2>חלק ב: בניית מספר דו-ספרתי</h2>
+            <p>רוב התלמידים עשו את זה כך:</p>
+
+            <div class="focus-item">
+                <h4>הדרך שלכם - שרשור מחרוזות</h4>
+                <pre>int tens = 6;
+int ones = 5;
+
+Console.WriteLine("" + tens + ones);
+// Output: 65</pre>
+            </div>
+
+            <div class="success-box" style="font-size: 1.3rem;">
+                ✓ נראה טוב! התוצאה 65 מוצגת כמו שצריך
+            </div>
+
+            <p style="font-size: 1.3rem; margin-top: 20px; text-align: center;">
+                עכשיו בואו ננסה את חלק ג'... 🤔
+            </p>
+        </div>
+
+        <!-- Slide 5: Part C - The Problem! -->
+        <div class="slide content-slide">
+            <h2>חלק ג: הכפלה ב-2</h2>
+            <p>בואו ננסה להכפיל את התוצאה ב-2:</p>
+
+            <div class="focus-item" style="border-color: #ef4444; border-width: 3px;">
+                <h4>ניסיון להכפיל:</h4>
+                <pre>int tens = 6;
+int ones = 5;
+string combined = "" + tens + ones;
+
+Console.WriteLine(combined * 2);</pre>
+            </div>
+
+            <div class="error-box" style="font-size: 1.5rem; margin-top: 20px;">
+                ❌ ERROR!<br>
+                לא ניתן להכפיל מחרוזת במספר
+            </div>
+
+            <div class="highlight-box" style="margin-top: 30px;">
+                הבעיה: בנינו מחרוזת "65" ולא מספר 65!<br>
+                צריך לבנות מספר אמיתי מתמטית! 💡
+            </div>
+        </div>
+
+        <!-- Slide 6: Building Numbers Mathematically - Step by Step -->
+        <div class="slide content-slide">
+            <h2>הדרך הנכונה: בניית מספר מתמטית</h2>
+            <p>בואו נלמד איך לבנות מספר אמיתי שאפשר לעשות איתו חישובים:</p>
+
+            <div class="step-box">
+                <h4>שלב 1: הבנת המבנה</h4>
+                המספר 65 זה בעצם: 6 עשרות + 5 אחדות = (6 × 10) + 5
+            </div>
+
+            <div class="step-box">
+                <h4>שלב 2: הנוסחה הכללית</h4>
+                <pre style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; margin-top: 10px;">digit1 * 10 + digit2</pre>
+                ספרת העשרות כפול 10 ועוד ספרת האחדות
+            </div>
+
+            <div class="step-box">
+                <h4>שלב 3: יישום בקוד</h4>
+                <pre>int tens = 6;
+int ones = 5;
+int combined = tens * 10 + ones;  // 6 * 10 + 5 = 65
+
+Console.WriteLine(combined);
+// Output: 65 (as a NUMBER, not a string!)</pre>
+            </div>
+
+            <div class="success-box" style="margin-top: 20px;">
+                עכשיו combined הוא מספר שלם (int) ולא מחרוזת! ✓
+            </div>
+        </div>
+
+        <!-- Slide 7: Completing Part C Successfully -->
+        <div class="slide content-slide">
+            <h2>השלמת חלק ג': הכפלה ב-2</h2>
+            <p>עכשיו כשיש לנו מספר אמיתי, נוכל להכפיל:</p>
+
+            <div class="focus-item" style="border-color: #10b981; border-width: 3px;">
+                <h4>הפתרון המלא והנכון:</h4>
+                <pre>// Part A: Breaking
+int num = 365;
+int hundreds = num / 100;        // 3
+int tens = (num / 10) % 10;      // 6
+int ones = num % 10;             // 5
+
+// Part B: Building (mathematical way)
+int combined = tens * 10 + ones; // 65 (real number)
+
+// Part C: Multiply and print
+int result = combined * 2;       // 130
+Console.WriteLine("Result: " + result);
+// Output: Result: 130</pre>
+            </div>
+
+            <div class="highlight-box" style="font-size: 1.5rem;">
+                מעולה! זה עובד! 🎉<br>
+                65 × 2 = 130
+            </div>
+
+            <div class="warning-box" style="margin-top: 20px;">
+                <strong>⚠️ זכרו:</strong> גם אם אתם רק צריכים להציג מספר, במבחן תמיד בנו אותו מתמטית!
+            </div>
+        </div>
+
+        <!-- ===== SECTION 2: String Concatenation vs Math (Parentheses) ===== -->
+
+        <!-- Slide 8: Parentheses Riddles -->
+        <div class="slide content-slide">
+            <h2>סוגריים ב-Console.WriteLine</h2>
+            <p>סוגריים משנים את התוצאה לחלוטין! מה יהיה הפלט?</p>
+
+            <div class="code-example" style="text-align: left; direction: ltr; margin: 20px 0;">
+int a = 2, b = 7;
+            </div>
+
+            <div class="grid-2">
+                <div class="focus-item">
+                    <h4>חידה 1</h4>
+                    <pre>Console.WriteLine(a + b);</pre>
+                    <div class="answer-hidden" id="paren1" onclick="revealAnswer('paren1')">
+                        <div class="result-display result-error">"27" - שרשור מחרוזות!</div>
+                        <p style="margin-top: 10px;">בלי סוגריים, ה-+ מתנהג כשרשור</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>חידה 2</h4>
+                    <pre>Console.WriteLine((a + b));</pre>
+                    <div class="answer-hidden" id="paren2" onclick="revealAnswer('paren2')">
+                        <div class="result-display">9 - חישוב מתמטי! ✓</div>
+                        <p style="margin-top: 10px;">הסוגריים מאלצים חישוב</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>חידה 3</h4>
+                    <pre>Console.WriteLine("Result: " + a + b);</pre>
+                    <div class="answer-hidden" id="paren3" onclick="revealAnswer('paren3')">
+                        <div class="result-display result-error">"Result: 27"</div>
+                        <p style="margin-top: 10px;">המחרוזת גורמת לשרשור</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>חידה 4</h4>
+                    <pre>Console.WriteLine("Result: " + (a + b));</pre>
+                    <div class="answer-hidden" id="paren4" onclick="revealAnswer('paren4')">
+                        <div class="result-display">"Result: 9" ✓</div>
+                        <p style="margin-top: 10px;">הסוגריים מחשבים קודם!</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>חידה 5</h4>
+                    <pre>Console.WriteLine(a + b + 5);</pre>
+                    <div class="answer-hidden" id="paren5" onclick="revealAnswer('paren5')">
+                        <div class="result-display result-error">"275" - שרשור!</div>
+                        <p style="margin-top: 10px;">2 + 7 + 5 = "275"</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>חידה 6</h4>
+                    <pre>Console.WriteLine((a + b) + 5);</pre>
+                    <div class="answer-hidden" id="paren6" onclick="revealAnswer('paren6')">
+                        <div class="result-display">14 - חישוב! ✓</div>
+                        <p style="margin-top: 10px;">(2 + 7) + 5 = 14</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 3: Special Operators ===== -->
+
+        <!-- Slide 9: Three Ways - Same Result -->
+        <div class="slide content-slide">
+            <h2>אופרטורים מיוחדים: ++ ו-+=</h2>
+            <p>שלוש דרכים לאותה פעולה - מה התוצאה?</p>
+
+            <div class="code-example" style="text-align: left; direction: ltr; margin: 20px 0;">
+int num = 5;
+            </div>
+
+            <div class="grid-3">
+                <div class="focus-item">
+                    <h4>אופציה 1</h4>
+                    <pre>num = num + 1;</pre>
+                    <div class="answer-hidden" id="op1" onclick="revealAnswer('op1')">
+                        <div class="result-display">num = 6</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>אופציה 2</h4>
+                    <pre>num += 1;</pre>
+                    <div class="answer-hidden" id="op2" onclick="revealAnswer('op2')">
+                        <div class="result-display">num = 6</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>אופציה 3</h4>
+                    <pre>num++;</pre>
+                    <div class="answer-hidden" id="op3" onclick="revealAnswer('op3')">
+                        <div class="result-display">num = 6</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="success-box" style="margin-top: 30px; font-size: 1.4rem;">
+                כל שלושתם שווים! כולם מוסיפים 1 ✓
+            </div>
+        </div>
+
+        <!-- Slide 10: But What About Different Number? -->
+        <div class="slide content-slide">
+            <h2>אבל מה אם רוצים להוסיף 5?</h2>
+
+            <div class="code-example" style="text-align: left; direction: ltr; margin: 20px 0;">
+int num = 10;
+            </div>
+
+            <div class="grid-3">
+                <div class="focus-item">
+                    <h4>אופציה 1</h4>
+                    <pre>num = num + 5;</pre>
+                    <div class="answer-hidden" id="op4" onclick="revealAnswer('op4')">
+                        <div class="result-display">15 ✓</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>אופציה 2</h4>
+                    <pre>num += 5;</pre>
+                    <div class="answer-hidden" id="op5" onclick="revealAnswer('op5')">
+                        <div class="result-display">15 ✓</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>אופציה 3</h4>
+                    <pre>num++;</pre>
+                    <div class="answer-hidden" id="op6" onclick="revealAnswer('op6')">
+                        <div class="result-display result-error">11 ❌</div>
+                        <p style="margin-top: 10px; color: #ef4444; font-weight: bold;">מוסיף רק 1!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 30px;">
+                ++ ו-- עובדים רק ל-1<br>
+                += ו-= עובדים לכל מספר
+            </div>
+        </div>
+
+        <!-- Slide 11: Operators Summary Table -->
+        <div class="slide content-slide">
+            <h2>סיכום אופרטורים</h2>
+            
+            <table>
+                <tr>
+                    <th>אופרטור</th>
+                    <th>שימוש</th>
+                    <th>דוגמה</th>
+                </tr>
+                <tr>
+                    <td><strong>++</strong></td>
+                    <td>הוספת 1 בלבד</td>
+                    <td><code>++count</code></td>
+                </tr>
+                <tr>
+                    <td><strong>--</strong></td>
+                    <td>הפחתת 1 בלבד</td>
+                    <td><code>--count</code></td>
+                </tr>
+                <tr>
+                    <td><strong>+=</strong></td>
+                    <td>הוספת כל מספר</td>
+                    <td><code>sum += 5</code></td>
+                </tr>
+                <tr>
+                    <td><strong>-=</strong></td>
+                    <td>הפחתת כל מספר</td>
+                    <td><code>balance -= 10</code></td>
+                </tr>
+                <tr>
+                    <td><strong>*=</strong></td>
+                    <td>כפל</td>
+                    <td><code>total *= 2</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ===== SECTION 4: Variable Naming Rules ===== -->
+
+        <!-- Slide 12: Rules Table -->
+        <div class="slide content-slide">
+            <h2>כללי שפת C# לשמות משתנים</h2>
+            
+            <table>
+                <tr>
+                    <th>כלל</th>
+                    <th>הסבר</th>
+                    <th>דוגמה תקינה</th>
+                    <th>דוגמה שגויה</th>
+                </tr>
+                <tr>
+                    <td>אסור רווחים</td>
+                    <td>שם המשתנה חייב להיות מילה אחת</td>
+                    <td><code>studentName</code></td>
+                    <td><code style="color: #ef4444;">student Name</code></td>
+                </tr>
+                <tr>
+                    <td>אסור תווים מיוחדים</td>
+                    <td>רק אותיות, מספרים ו-_</td>
+                    <td><code>student_name</code></td>
+                    <td><code style="color: #ef4444;">student#</code></td>
+                </tr>
+                <tr>
+                    <td>אסור להתחיל במספר</td>
+                    <td>חייב להתחיל באות או _</td>
+                    <td><code>student2</code></td>
+                    <td><code style="color: #ef4444;">2students</code></td>
+                </tr>
+                <tr>
+                    <td>אסור מילים שמורות</td>
+                    <td>לא ניתן להשתמש במילים של C#</td>
+                    <td><code>myInt</code></td>
+                    <td><code style="color: #ef4444;">int</code></td>
+                </tr>
+            </table>
+
+            <h3 style="margin-top: 30px;">קונבנציות (מומלץ!)</h3>
+            <table style="margin-top: 15px;">
+                <tr>
+                    <th>קונבנציה</th>
+                    <th>הסבר</th>
+                    <th>דוגמה מומלצת</th>
+                    <th>לא מומלץ</th>
+                </tr>
+                <tr>
+                    <td>התחלה באות קטנה</td>
+                    <td>משתנים מתחילים באות קטנה</td>
+                    <td><code>studentName</code></td>
+                    <td><code>StudentName</code></td>
+                </tr>
+                <tr>
+                    <td>מילה שנייה באות גדולה</td>
+                    <td>כל מילה נוספת באות גדולה</td>
+                    <td><code>myAge</code></td>
+                    <td><code>myage</code></td>
+                </tr>
+                <tr>
+                    <td>ללא קו תחתון</td>
+                    <td>קו תחתון מותר אבל לא מקובל</td>
+                    <td><code>firstName</code></td>
+                    <td><code>first_name</code></td>
+                </tr>
+                <tr>
+                    <td>שמות משמעותיים</td>
+                    <td>באנגלית ומתארים את השימוש</td>
+                    <td><code>studentAge</code></td>
+                    <td><code>x</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 13: Valid Names Riddles -->
+        <div class="slide content-slide">
+            <h2>איזה שמות תקינים?</h2>
+            <p>לחץ על כל שם לגלות אם הוא תקין:</p>
+            
+            <div class="grid-auto">
+                <div class="focus-item">
+                    <h4><code>studentName</code></h4>
+                    <div class="answer-hidden" id="name1" onclick="revealAnswer('name1')">
+                        <div class="result-display">✅ תקין!</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>Student Name</code></h4>
+                    <div class="answer-hidden" id="name2" onclick="revealAnswer('name2')">
+                        <div class="result-display result-error">❌ שגוי<br>יש רווח</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>2students</code></h4>
+                    <div class="answer-hidden" id="name3" onclick="revealAnswer('name3')">
+                        <div class="result-display result-error">❌ שגוי<br>מתחיל במספר</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>student2</code></h4>
+                    <div class="answer-hidden" id="name4" onclick="revealAnswer('name4')">
+                        <div class="result-display">✅ תקין!</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>student_name</code></h4>
+                    <div class="answer-hidden" id="name5" onclick="revealAnswer('name5')">
+                        <div class="result-display">✅ תקין<br>(אבל לא מומלץ)</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>student#</code></h4>
+                    <div class="answer-hidden" id="name6" onclick="revealAnswer('name6')">
+                        <div class="result-display result-error">❌ שגוי<br>תו מיוחד</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>int</code></h4>
+                    <div class="answer-hidden" id="name7" onclick="revealAnswer('name7')">
+                        <div class="result-display result-error">❌ שגוי<br>מילה שמורה</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>_student</code></h4>
+                    <div class="answer-hidden" id="name8" onclick="revealAnswer('name8')">
+                        <div class="result-display">✅ תקין!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Find the Errors -->
+        <div class="slide content-slide">
+            <h2>מה לא בסדר בשמות האלה?</h2>
+            
+            <div class="grid-2">
+                <div class="focus-item">
+                    <h4><code>my variable</code></h4>
+                    <div class="answer-hidden" id="error1" onclick="revealAnswer('error1')">
+                        <p style="color: #ef4444; font-weight: bold; font-size: 1.1rem;">
+                            בעיה: יש רווח<br>
+                            תיקון: <code style="color: #10b981;">myVariable</code>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>7days</code></h4>
+                    <div class="answer-hidden" id="error2" onclick="revealAnswer('error2')">
+                        <p style="color: #ef4444; font-weight: bold; font-size: 1.1rem;">
+                            בעיה: מתחיל במספר<br>
+                            תיקון: <code style="color: #10b981;">days7</code> או <code style="color: #10b981;">sevenDays</code>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>user@name</code></h4>
+                    <div class="answer-hidden" id="error3" onclick="revealAnswer('error3')">
+                        <p style="color: #ef4444; font-weight: bold; font-size: 1.1rem;">
+                            בעיה: תו מיוחד @<br>
+                            תיקון: <code style="color: #10b981;">userName</code>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>class</code></h4>
+                    <div class="answer-hidden" id="error4" onclick="revealAnswer('error4')">
+                        <p style="color: #ef4444; font-weight: bold; font-size: 1.1rem;">
+                            בעיה: מילה שמורה<br>
+                            תיקון: <code style="color: #10b981;">className</code> או <code style="color: #10b981;">myClass</code>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4><code>student-name</code></h4>
+                    <div class="answer-hidden" id="error5" onclick="revealAnswer('error5')">
+                        <p style="color: #ef4444; font-weight: bold; font-size: 1.1rem;">
+                            בעיה: תו מיוחד -<br>
+                            תיקון: <code style="color: #10b981;">studentName</code>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 5: Variable Declaration ===== -->
+
+        <!-- Slide 15: Different Ways -->
+        <div class="slide content-slide">
+            <h2>דרכים להגדיר ולהשים ערך למשתנים</h2>
+            
+            <div class="focus-item">
+                <h4>דרך 1: הגדרה בלבד</h4>
+                <pre>int x;  // Default value: 0</pre>
+                <p style="margin-top: 10px; color: #6b7280;">במשתני int, ערך ברירת המחדל הוא 0</p>
+            </div>
+
+            <div class="focus-item">
+                <h4>דרך 2: הגדרה והשמה בשורות נפרדות</h4>
+                <pre>int y;
+y = 5;</pre>
+            </div>
+
+            <div class="focus-item">
+                <h4>דרך 3: הגדרה והשמה בשורה אחת</h4>
+                <pre>int z = 10;</pre>
+            </div>
+
+            <div class="focus-item">
+                <h4>דרך 4: כמה משתנים מאותו טיפוס</h4>
+                <pre>int a = 5, b = 10, c;
+string name = "John", city = "Tel Aviv";</pre>
+                <div class="warning-box" style="margin-top: 10px;">
+                    ⚠️ כל המשתנים חייבים להיות מאותו טיפוס!
+                </div>
+            </div>
+
+            <div class="focus-item">
+                <h4>דרך 5: שימוש במשתנה קודם</h4>
+                <pre>int num1 = 5;
+int num2 = num1 * 2;  // Can use previously defined variable</pre>
+            </div>
+        </div>
+
+        <!-- Slide 16: Valid or Not Riddles -->
+        <div class="slide content-slide">
+            <h2>איזה הגדרות תקינות?</h2>
+            
+            <div class="grid-2">
+                <div class="focus-item">
+                    <h4>דוגמה 1</h4>
+                    <pre>int x = 5, y = 2, z;</pre>
+                    <div class="answer-hidden" id="decl1" onclick="revealAnswer('decl1')">
+                        <div class="result-display">✅ תקין!</div>
+                        <p style="margin-top: 10px;">(כולם מאותו טיפוס)</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>דוגמה 2</h4>
+                    <pre>int a = 5, b = a * 2;</pre>
+                    <div class="answer-hidden" id="decl2" onclick="revealAnswer('decl2')">
+                        <div class="result-display">✅ תקין!</div>
+                        <p style="margin-top: 10px;">(a כבר הוגדר באותה שורה)</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>דוגמה 3</h4>
+                    <pre>int m = n * 2, n = 5;</pre>
+                    <div class="answer-hidden" id="decl3" onclick="revealAnswer('decl3')">
+                        <div class="result-display result-error">❌ שגוי!</div>
+                        <p style="margin-top: 10px;">(לא ניתן להשתמש ב-n לפני שהוגדר)</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>דוגמה 4</h4>
+                    <pre>int x = 5;
+int y = x + 1;</pre>
+                    <div class="answer-hidden" id="decl4" onclick="revealAnswer('decl4')">
+                        <div class="result-display">✅ תקין!</div>
+                        <p style="margin-top: 10px;">(x הוגדר בשורה קודמת)</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>דוגמה 5</h4>
+                    <pre>int a = 5, string b = "hello";</pre>
+                    <div class="answer-hidden" id="decl5" onclick="revealAnswer('decl5')">
+                        <div class="result-display result-error">❌ שגוי!</div>
+                        <p style="margin-top: 10px;">(טיפוסים שונים באותה שורה)</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>דוגמה 6</h4>
+                    <pre>int num1, num2, num3;
+num1 = 1;
+num2 = 2;
+num3 = 3;</pre>
+                    <div class="answer-hidden" id="decl6" onclick="revealAnswer('decl6')">
+                        <div class="result-display">✅ תקין!</div>
+                        <p style="margin-top: 10px;">(הגדרה והשמה בשורות נפרדות)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: What Will Be The Value -->
+        <div class="slide content-slide">
+            <h2>מה יהיה ערך המשתנה?</h2>
+            
+            <div class="grid-2">
+                <div class="focus-item">
+                    <h4>תרחיש 1</h4>
+                    <pre>int x;</pre>
+                    <p style="margin-top: 10px;">מה ערך x?</p>
+                    <div class="answer-hidden" id="value1" onclick="revealAnswer('value1')">
+                        <div class="result-display">0</div>
+                        <p style="margin-top: 10px;">(ערך ברירת מחדל)</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>תרחיש 2</h4>
+                    <pre>int a = 5, b = a + 3;</pre>
+                    <p style="margin-top: 10px;">מה ערך b?</p>
+                    <div class="answer-hidden" id="value2" onclick="revealAnswer('value2')">
+                        <div class="result-display">8</div>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>תרחיש 3</h4>
+                    <pre>int x = 10;
+int y = x;
+x = 20;</pre>
+                    <p style="margin-top: 10px;">מה ערך y?</p>
+                    <div class="answer-hidden" id="value3" onclick="revealAnswer('value3')">
+                        <div class="result-display">10</div>
+                        <p style="margin-top: 10px;">(y קיבל את הערך המקורי של x)</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>תרחיש 4</h4>
+                    <pre>int a = 5, b = 10, c = a + b;</pre>
+                    <p style="margin-top: 10px;">מה ערך c?</p>
+                    <div class="answer-hidden" id="value4" onclick="revealAnswer('value4')">
+                        <div class="result-display">15</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== NEW: Comparison Operators Boundaries ===== -->
+
+        <!-- Slide 18: Comparison Operators Boundaries -->
+        <div class="slide content-slide">
+            <h2>אופרטורי השוואה - תשומת לב לגבולות!</h2>
+            <p>הבדל קטן באופרטור יכול לשנות את התוצאה:</p>
+
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="focus-item" style="border-color: #f97316; border-width: 3px;">
+                    <h4>< (קטן מ)</h4>
+                    <pre>int age = 18;
+if (age < 18) {
+    Console.WriteLine("Minor");
+}</pre>
+                    <p style="margin-top: 10px; font-weight: bold;">לא ייכנס לתנאי! 18 לא קטן מ-18</p>
+                </div>
+
+                <div class="focus-item" style="border-color: #10b981; border-width: 3px;">
+                    <h4><= (קטן או שווה)</h4>
+                    <pre>int age = 18;
+if (age <= 18) {
+    Console.WriteLine("18 or younger");
+}</pre>
+                    <p style="margin-top: 10px; font-weight: bold;">ייכנס לתנאי! 18 שווה ל-18 ✓</p>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 30px;">
+                תמיד שאלו את עצמכם:<br>
+                "האם הערך הגבולי (18, 100, 0...) צריך להיכלל בתנאי?"
+            </div>
+
+            <h3 style="margin-top: 30px;">חידות:</h3>
+            <div class="grid-2">
+                <div class="focus-item">
+                    <h4>חידה 1</h4>
+                    <pre>int score = 100;
+// We want scores 100 and above
+if (score ??? 100) {
+    Console.WriteLine("Perfect!");
+}</pre>
+                    <p>איזה אופרטור?</p>
+                    <div class="answer-hidden" id="comp1" onclick="revealAnswer('comp1')">
+                        <div class="result-display">>= (גדול או שווה)</div>
+                        <p style="margin-top: 10px;">כי 100 צריך להיכלל!</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>חידה 2</h4>
+                    <pre>int temperature = 0;
+// Water freezes at 0 and below
+if (temperature ??? 0) {
+    Console.WriteLine("Frozen");
+}</pre>
+                    <p>איזה אופרטור?</p>
+                    <div class="answer-hidden" id="comp2" onclick="revealAnswer('comp2')">
+                        <div class="result-display"><= (קטן או שווה)</div>
+                        <p style="margin-top: 10px;">כי 0 זה גם קפוא!</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>חידה 3</h4>
+                    <pre>int age = 17;
+// Must be OVER 18 (not including 18)
+if (age ??? 18) {
+    Console.WriteLine("Adult");
+}</pre>
+                    <p>איזה אופרטור?</p>
+                    <div class="answer-hidden" id="comp3" onclick="revealAnswer('comp3')">
+                        <div class="result-display">> (גדול מ)</div>
+                        <p style="margin-top: 10px;">כי 18 לא נכלל!</p>
+                    </div>
+                </div>
+
+                <div class="focus-item">
+                    <h4>חידה 4</h4>
+                    <pre>int stock = 5;
+// Need more than 5 items
+if (stock ??? 5) {
+    Console.WriteLine("Sufficient");
+}</pre>
+                    <p>איזה אופרטור?</p>
+                    <div class="answer-hidden" id="comp4" onclick="revealAnswer('comp4')">
+                        <div class="result-display">> (גדול מ)</div>
+                        <p style="margin-top: 10px;">כי רוצים יותר מ-5 (לא כולל 5)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Slide: Summary -->
+        <div class="slide content-slide">
+            <h2>סיכום - נקודות חשובות לזכור</h2>
+            
+            <ul>
+                <li><strong>✅ פירוק מספרים:</strong> % 10 לאחדות, (/ 10) % 10 לעשרות, / 100 למאות</li>
+                <li><strong>✅ בניית מספרים:</strong> תמיד בצורה מתמטית! <code>digit1 * 10 + digit2</code></li>
+                <li><strong>✅ סוגריים:</strong> מאלצים חישוב ב-Console.WriteLine</li>
+                <li><strong>✅ אופרטורים:</strong> ++ ו-- רק ל-1, += ו-= לכל מספר</li>
+                <li><strong>✅ שמות משתנים:</strong> בלי רווחים, בלי תווים מיוחדים, לא להתחיל במספר</li>
+                <li><strong>✅ קונבנציות:</strong> אות קטנה בהתחלה, מילה שנייה באות גדולה</li>
+                <li><strong>✅ הגדרת משתנים:</strong> כמה משתנים באותה שורה רק מאותו טיפוס</li>
+                <li><strong>✅ אופרטורי השוואה:</strong> תשימו לב לגבולות - < לעומת <=</li>
+            </ul>
+
+            <div class="highlight-box" style="font-size: 2rem; margin-top: 50px;">
+                בהצלחה במבחן! 🎯
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="prevSlide()" id="prev-btn" disabled>הקודם →</button>
+        <button class="nav-btn" onclick="nextSlide()" id="next-btn">← הבא</button>
+    </div>
+
+    <!-- Slide Number -->
+    <div class="slide-number">
+        <span id="total-slides">18</span> / <span id="current-slide">1</span>
+    </div>
+
+    <!-- Copyright -->
+    <div class="copyright">© חגית ידוב 2025</div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            slides[currentSlide].classList.add('active');
+
+            // Calculate content slide number (skip title slide)
+            const contentSlideNumber = currentSlide === 0 ? 0 : currentSlide;
+
+            if (currentSlide > 0) {
+                document.getElementById('current-slide').textContent = contentSlideNumber;
+            }
+
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+
+            // Hide/show UI elements based on slide type
+            const isTitle = slides[currentSlide].classList.contains('title-slide');
+            document.querySelector('.slide-number').style.display = isTitle ? 'none' : 'block';
+            document.querySelector('.copyright').style.display = isTitle ? 'none' : 'block';
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        function revealAnswer(answerId) {
+            document.getElementById(answerId).classList.add('revealed');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                prevSlide(); // In RTL, right arrow goes to previous
+            } else if (e.key === 'ArrowLeft' || e.key === ' ') {
+                nextSlide(); // In RTL, left arrow goes to next
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const isTitle = slides[currentSlide].classList.contains('title-slide');
+            document.querySelector('.slide-number').style.display = isTitle ? 'none' : 'block';
+            document.querySelector('.copyright').style.display = isTitle ? 'none' : 'block';
+            document.getElementById('total-slides').textContent = totalSlides - 1;
+        });
+    </script>
+</body>
+</html>
